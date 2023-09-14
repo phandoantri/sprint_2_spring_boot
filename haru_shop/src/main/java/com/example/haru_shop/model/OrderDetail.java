@@ -19,11 +19,15 @@ public class OrderDetail {
     @ManyToOne
     @JoinColumn(name = "orders_id")
     private Orders orders;
+    @ManyToOne
+    @JoinColumn(columnDefinition = "id_user")
+    private Customer customer;
 
     public OrderDetail() {
     }
 
-    public OrderDetail(Long id, double price, int quantity, LocalDateTime createDate, LocalDateTime updateDate, boolean isDelete, Product product, Orders orders) {
+
+    public OrderDetail(Long id, double price, int quantity, LocalDateTime createDate, LocalDateTime updateDate, boolean isDelete, Product product, Orders orders, Customer customer) {
         this.id = id;
         this.price = price;
         this.quantity = quantity;
@@ -32,6 +36,7 @@ public class OrderDetail {
         this.isDelete = isDelete;
         this.product = product;
         this.orders = orders;
+        this.customer = customer;
     }
 
     public Long getId() {
@@ -96,5 +101,13 @@ public class OrderDetail {
 
     public void setOrders(Orders orders) {
         this.orders = orders;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 }

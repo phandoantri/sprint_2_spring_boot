@@ -62,4 +62,5 @@ public class AccountService implements UserDetailsService, IAccountService {
         account1.setPassword(password);
         accountRepository.saveNewPassword(account1.getId(), account1.getPassword());
     }
+
 }

@@ -9,24 +9,30 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private int quantity;
-    private boolean isDelete;
-    @ManyToOne
-    @JoinColumn(name="product_id")
-    private Product product;
     @OneToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
+    @ManyToOne
+    @JoinColumn(name="product_id")
+    private Product product;
+   
 
     public Cart() {
     }
 
-    public Cart(Long id, int quantity, boolean isDelete, Product product, Customer customer) {
+    public Cart(Long id, int quantity, Customer customer, Product product) {
         this.id = id;
         this.quantity = quantity;
-        this.isDelete = isDelete;
-        this.product = product;
         this.customer = customer;
+        this.product = product;
     }
+
+    public Cart(int quantity, Product product, Customer customer) {
+        this.quantity = quantity;
+        this.customer = customer;
+        this.product = product;
+    }
+
 
     public Long getId() {
         return id;
@@ -44,13 +50,7 @@ public class Cart {
         this.quantity = quantity;
     }
 
-    public boolean isDelete() {
-        return isDelete;
-    }
 
-    public void setDelete(boolean delete) {
-        isDelete = delete;
-    }
 
     public Product getProduct() {
         return product;
@@ -67,4 +67,5 @@ public class Cart {
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
+
 }

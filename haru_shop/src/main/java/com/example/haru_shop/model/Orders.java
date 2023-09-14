@@ -9,6 +9,7 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime createDate;
+    private int totalPayment;
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
@@ -16,9 +17,10 @@ public class Orders {
     public Orders() {
     }
 
-    public Orders(Long id, LocalDateTime createDate, Customer customer) {
+    public Orders(Long id, LocalDateTime createDate, int totalPayment, Customer customer) {
         this.id = id;
         this.createDate = createDate;
+        this.totalPayment = totalPayment;
         this.customer = customer;
     }
 
@@ -36,6 +38,14 @@ public class Orders {
 
     public void setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
+    }
+
+    public int getTotalPayment() {
+        return totalPayment;
+    }
+
+    public void setTotalPayment(int totalPayment) {
+        this.totalPayment = totalPayment;
     }
 
     public Customer getCustomer() {

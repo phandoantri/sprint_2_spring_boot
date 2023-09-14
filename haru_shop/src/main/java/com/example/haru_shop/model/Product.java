@@ -11,6 +11,7 @@ public class Product {
     private Long id;
     private String name;
     private double price;
+    private double weight;
     private String description;
     private String image;
     private int quantity;
@@ -24,10 +25,11 @@ public class Product {
     public Product() {
     }
 
-    public Product(Long id, String name, double price, String description, String image, int quantity, LocalDate startDate, LocalDate endDate, boolean isDelete, ProductType productType) {
+    public Product(Long id, String name, double price, double weight, String description, String image, int quantity, LocalDate startDate, LocalDate endDate, boolean isDelete, ProductType productType) {
         this.id = id;
         this.name = name;
         this.price = price;
+        this.weight = weight;
         this.description = description;
         this.image = image;
         this.quantity = quantity;
@@ -59,6 +61,14 @@ public class Product {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
     }
 
     public String getDescription() {
