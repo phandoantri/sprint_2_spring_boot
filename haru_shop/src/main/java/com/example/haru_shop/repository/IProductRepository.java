@@ -26,4 +26,5 @@ public interface IProductRepository extends JpaRepository<Product,Long> {
 List<Product> searchProduct(@Param("id") Long id);
 @Query(value = "select * from product where product.name like concat('%', :name ,'%')",nativeQuery = true)
     List<Product> searchProductByName(@Param("name") String name);
+
 }

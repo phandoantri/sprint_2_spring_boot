@@ -7,6 +7,8 @@ import com.example.haru_shop.model.Product;
 import com.example.haru_shop.repository.ICartRepository;
 import com.example.haru_shop.service.ICartService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,12 +39,12 @@ public class CartService implements ICartService {
             iCartRepository.save(cart);
     }
 
-    @Override
-    public void setQuantityShoppingCartPlus(int setQuantity, Long id) {
-        Cart cart=iCartRepository.findById(id).get();
-        cart.setQuantity(cart.getQuantity()+1);
-        iCartRepository.save(cart);
-    }
+//    @Override
+//    public void setQuantityShoppingCartPlus(int setQuantity, Long id) {
+//        Cart cart=iCartRepository.findById(id).get();
+//        cart.setQuantity(cart.getQuantity()+1);
+//        iCartRepository.save(cart);
+//    }
 
     @Override
     public void deleteProductFromCart(Long id) {
@@ -58,4 +60,28 @@ public class CartService implements ICartService {
     public List<Cart> findAllCartByUserName(String username) {
         return iCartRepository.findCartByCustomer_Account_Username(username);
     }
+
+    @Override
+    public Cart findById(Long id) {
+        return iCartRepository.findById(id).get();
+    }
+
+    @Override
+    public ResponseEntity<?> setQuantityShoppingCartPlus(int setQuantity, Long id) {
+        Cart cart=iCartRepository.findById(id).get();
+        if (setQuantity>0){
+            if (cart.getQuantity()>=cart.getProduct().getQuantity()){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Số lượng sản phẩm trong giỏ hàng vượt quá số lượng trong kho.!!");
+            }
+            else {
+                cart.setQuantity(cart.getQuantity()+1);
+                iCartRepository.save(cart);
+                return new ResponseEntity<>(cart,HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
+
+
 }

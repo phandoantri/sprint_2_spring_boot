@@ -34,7 +34,7 @@ public class ProductController {
 
 
     @DeleteMapping("/delete/{id}")
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -46,6 +46,7 @@ public class ProductController {
         return new ResponseEntity<>(product,HttpStatus.OK);
     }
     @GetMapping("/search/{id}")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_CUSTOMER')")
     public ResponseEntity<List<Product>> searchProduct(@PathVariable Long id){
         List<Product> products=productService.searchProduct(id);
         if (id==null){
@@ -54,8 +55,10 @@ public class ProductController {
         return new ResponseEntity<>(products,HttpStatus.OK);
     }
     @GetMapping("/searchByName")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_CUSTOMER')")
     public ResponseEntity<List<Product>> searchByNameProduct(@RequestParam String name){
         List<Product> productList=productService.searchProductByNameProduct(name);
         return new ResponseEntity<>(productList,HttpStatus.OK);
     }
+
 }

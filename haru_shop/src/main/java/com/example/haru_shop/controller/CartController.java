@@ -2,15 +2,9 @@ package com.example.haru_shop.controller;
 
 import com.example.haru_shop.config.JwtRequestFilter;
 import com.example.haru_shop.config.JwtTokenUtil;
-import com.example.haru_shop.model.Account;
-import com.example.haru_shop.model.Cart;
-import com.example.haru_shop.model.Customer;
-import com.example.haru_shop.model.Product;
+import com.example.haru_shop.model.*;
 import com.example.haru_shop.repository.ICustomerRepository;
-import com.example.haru_shop.service.IAccountService;
-import com.example.haru_shop.service.ICartService;
-import com.example.haru_shop.service.ICustomerService;
-import com.example.haru_shop.service.IProductService;
+import com.example.haru_shop.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jms.JmsProperties;
 import org.springframework.http.HttpStatus;
@@ -40,7 +34,7 @@ public class CartController {
     private IAccountService iAccountService;
 
     @PostMapping("/add")
-//    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
+    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<Cart> addProduct( @RequestParam(name = "quantity") int quantity,
                                            @RequestParam(name = "id") Long id) {
         Product product = iProductService.findProductById(id);
@@ -52,7 +46,12 @@ public class CartController {
             Cart shoppingCart = iCartService.findByCustomersProduct(customer, product);
             if (shoppingCart != null) {
                 int amount = shoppingCart.getQuantity() + quantity;
-                shoppingCart.setQuantity(amount);
+                if (amount<=product.getQuantity()){
+                    shoppingCart.setQuantity(amount);
+                }else {
+                    product.setQuantity(product.getQuantity());
+                }
+
                 iCartService.addCart(shoppingCart);
                 return new ResponseEntity<>(shoppingCart, HttpStatus.OK);
             }
@@ -62,12 +61,17 @@ public class CartController {
         return new ResponseEntity<>(shoppingCartNew, HttpStatus.CREATED);
     }
     @GetMapping("/listCart")
+    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<?> getAllCart(){
         List<Cart> cartList=iCartService.getAllCart();
         return new ResponseEntity<>(cartList,HttpStatus.OK);
     }
     @PatchMapping("/minus/{setQuantity}/{id}")
+    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<?> setQuantityCart(@PathVariable int setQuantity, @PathVariable Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username =authentication.getName();
+        Account account = iAccountService.findByUsername(username);
         try {
             iCartService.setQuantityShoppingCart(setQuantity, id);
             return new ResponseEntity<>(HttpStatus.OK);
@@ -76,15 +80,27 @@ public class CartController {
         }
     }
     @PatchMapping("/plus/{setQuantity}/{id}")
+    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<?> setQuantityCartPlus(@PathVariable int setQuantity, @PathVariable Long id) {
+//        try {
+//            iCartService.setQuantityShoppingCartPlus(setQuantity, id);
+//            return new ResponseEntity<>(HttpStatus.OK);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username =authentication.getName();
+        Account account = iAccountService.findByUsername(username);
         try {
-            iCartService.setQuantityShoppingCartPlus(setQuantity, id);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
+           return new ResponseEntity<>(iCartService.setQuantityShoppingCartPlus(setQuantity, id),HttpStatus.OK);
+        }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+
     @DeleteMapping("/deleteProductFromCart/{id}")
+    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     public ResponseEntity<?> deleteProductFromCart(@PathVariable Long id){
         iCartService.deleteProductFromCart(id);
         return new ResponseEntity<>(HttpStatus.OK);
